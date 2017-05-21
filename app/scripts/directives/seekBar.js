@@ -5,7 +5,7 @@
      * @desc calculate horizontal percent along the seekbar where the event occured.
     **/
     var calculatePercent = function(seekBar,event){
-      var offsetX = event.PageX - seekBar.offset().left;
+      var offsetX = event.pageX - seekBar.offset().left;
       var seekBarWidth = seekBar.width();
       var offsetXPercent = offsetX / seekBarWidth;
       offsetXPercent = Math.max(0, offsetXPercent);
@@ -30,11 +30,14 @@
         var percentString = function(){
           var value = scope.value;
           var max = scope.max;
-          var percentage = value/max* 100;
-          return percentage + "%";
+          var percent = value/max* 100;
+          return percent + "%";
         }
         scope.fillStyle = function(){
           return {width: percentString()};
+        }
+        scope.thumbStyle = function(){
+          return {left: percentString()};
         }
         /**
         @function onClickSeekBar

@@ -1,7 +1,11 @@
 (function(){
-  function SongPlayer(){
+  function SongPlayer(Fixtures){
     var songPlayer = {};
-    var currentSong = null;
+    var currentAlbum = Fixtures.getAlbum();
+    var getSongIndex = function(song){
+      return currentAlbum.songs.indexOf(song);
+    }
+    songPlayer.currentSong = null;
     /**
       * @desc Buzz object audio file
       * @type {Object}
@@ -15,13 +19,13 @@
     var setSong = function(song){
       if(currentBuzzObject){
         currentBuzzObject.stop();
-        currentSong.playing = null;
+        songPlayer.currentSong.playing = null;
       }
       currentBuzzObject = new buzz.sound(song.audioUrl,{
         formats: ['mp3'],
         preload: true
       });
-      currentSong = song;
+      songPlayer.currentSong = song;
     };
     /**
       * @function PlaySong
@@ -29,7 +33,7 @@
     **/
     var playSong = function(){
         currentBuzzObject.play();
-        currentSong.playing = true;
+        songPlayer.currentSong.playing = true;
     };
     /**
       * @function songPlayer.play
@@ -37,10 +41,11 @@
       * if true, checks to see if the song is paused, if it is, resume the song
     **/
     songPlayer.play = function(song){
-      if(currentSong !== song){
+      song = song || songPlayer.currentSong;
+      if(songPlayer.currentSong !== song){
         setSong(song);
         playSong();
-    } else if(currentSong == song){
+    } else if(songPlayer.currentSong == song){
         if(currentBuzzObject.isPaused()){
           playSong();
       }
@@ -51,13 +56,32 @@
       * @desc Method called on ng-click in HTML element to pause the song and set the song.playing attriute to false for determining conditional formatting in the player and list
     **/
       songPlayer.pause = function(song){
+      song = song || songPlayer.currentSong;
       currentBuzzObject.pause();
-      song.playing = false;
+      songPlayer.currentSong.playing = false;
+
     };
+    /**
+    * @function songPlayer.previous
+      @desc uses getSongIndex to grab current songs index and then decrements the song index
+    **/
+    songPlayer.previous = function(){
+      var currentSongIndex = getSongIndex(songPlayer.currentSong);
+      currentSongIndex--;
+      if(currentSongIndex < 0){
+        currentBuzzObject.stop();
+        SongPlayer.current.playing = null;
+      } else {
+        var song = currentAlbum.songs[currentSongIndex];
+        setSong(song);
+        playSong(song);
+      }
+    }
+
     return songPlayer;
   }
 
   angular
     .module('blocJams')
-    .factory('SongPlayer', SongPlayer);
+    .factory('SongPlayer', ['Fixtures',SongPlayer]);
 })();

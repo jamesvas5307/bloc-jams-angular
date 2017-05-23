@@ -1,0 +1,10 @@
+<section class="player-info container clearfix">
+  <section class="profile column full">
+    <img src="{{profile.playerInfo.playerImage}}"/>
+    <h2>{{profile.playerInfo.UserName}}</h2>
+    <h3>Favorites</h3>
+    <section class ="favorites" ng-repeat="song in profile.playerInfo.favorites">
+      <p>{{song[1]}} - {{song[0].title}}</p>
+    </section>
+  </section>
+ </section>

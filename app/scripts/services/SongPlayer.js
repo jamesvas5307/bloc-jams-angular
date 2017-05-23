@@ -12,6 +12,7 @@
     };
     songPlayer.currentSong = null;
     songPlayer.currentTime = null;
+    songPlayer.mute = false;
     /**
       * @desc Buzz object audio file
       * @type {Object}
@@ -34,6 +35,9 @@
       currentBuzzObject.bind('timeupdate', function() {
         $rootScope.$apply(function() {
         songPlayer.currentTime = currentBuzzObject.getTime();
+        if(songPlayer.currentTime === songPlayer.currentSong.duration){
+          songPlayer.next();
+        }
     });
 
   });
@@ -115,7 +119,17 @@
     };
     songPlayer.setVolume = function(newValue){
       if (currentBuzzObject){
+        songPlayer.mute = newValue != 0 ? false : true ;
         currentBuzzObject.setVolume(newValue);
+      }
+    }
+    songPlayer.mute = function(){
+      if(songPlayer.mute){
+        songPlayer.mute = false;
+        songPlayer.setVolume(20);
+      } else {
+        songPlayer.mute = true;
+        songPlayer.setVolume(0);
       }
     }
 
